@@ -4,18 +4,28 @@
 #
 # Terraform injects ENGINE_IP at render time via templatefile().
 
-set -euo pipefail
+set -uo pipefail
 exec > >(tee /var/log/iii-inference-setup.log) 2>&1
+
+export HOME=/root   # cloud-init user_data does not set HOME
 
 ENGINE_IP="${engine_internal_ip}"   # injected by Terraform templatefile()
 III_URL="ws://$ENGINE_IP:49134"
 
 echo "[inference-setup] Starting at $(date), engine=$III_URL"
 
+# ── Swap (2 GB) to survive pip/compile on t3.small ───────────────────────────
+if [ ! -f /swapfile ]; then
+  fallocate -l 2G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  echo "[inference-setup] Swap enabled"
+fi
+
 # ── System dependencies ───────────────────────────────────────────────────────
-export HOME=/root   # cloud-init user_data does not set HOME
 apt-get update -qq
-apt-get install -y -qq python3 python3-pip python3-venv curl git jq
+apt-get install -y -qq python3 python3-pip python3-venv curl git jq cmake gcc g++ build-essential
 
 # ── Project directory ─────────────────────────────────────────────────────────
 WORKER_DIR=/opt/iii-inference-worker
@@ -27,14 +37,12 @@ echo "[inference-setup] Cloning $REPO ..."
 git clone --depth=1 "$REPO" /tmp/devops_repo
 cp -r /tmp/devops_repo/workers/inference-worker/. "$WORKER_DIR/"
 
-# ── Python virtualenv + dependencies ────────────────────────────────────────────────
+# ── Python virtualenv + dependencies ─────────────────────────────────────────
 python3 -m venv "$WORKER_DIR/.venv"
 "$WORKER_DIR/.venv/bin/pip" install --upgrade pip -q
 
-# Install torch CPU-only first (avoids downloading the 2 GB CUDA build)
-echo "[inference-setup] Installing torch (CPU build)..."
-"$WORKER_DIR/.venv/bin/pip" install torch \
-  --index-url https://download.pytorch.org/whl/cpu -q
+echo "[inference-setup] Installing llama-cpp-python (pre-built binary)..."
+"$WORKER_DIR/.venv/bin/pip" install llama-cpp-python --prefer-binary -q
 
 echo "[inference-setup] Installing remaining Python dependencies..."
 "$WORKER_DIR/.venv/bin/pip" install -r "$WORKER_DIR/requirements.txt" -q

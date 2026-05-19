@@ -29,9 +29,9 @@ variable "engine_instance_type" {
 }
 
 variable "inference_instance_type" {
-  description = "EC2 instance type for inference-vm (needs ~8 GB RAM for GGUF model)"
+  description = "EC2 instance type for inference-vm (needs enough RAM for GGUF model)"
   type        = string
-  default     = "t3.large" # 2 vCPU, 8 GB RAM
+  default     = "t3.small" # 2 vCPU, 2 GB RAM — testing account restriction
 }
 
 variable "caller_instance_type" {

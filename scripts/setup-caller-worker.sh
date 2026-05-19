@@ -13,8 +13,9 @@ III_URL="ws://$ENGINE_IP:49134"
 echo "[caller-setup] Starting at $(date), engine=$III_URL"
 
 # ── System dependencies ───────────────────────────────────────────────────────
+export HOME=/root   # cloud-init user_data does not set HOME
 apt-get update -qq
-apt-get install -y -qq curl git
+apt-get install -y -qq curl git jq
 
 # ── Node.js 20 LTS ───────────────────────────────────────────────────────────
 if ! command -v node &>/dev/null; then

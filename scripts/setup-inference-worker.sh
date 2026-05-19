@@ -13,8 +13,9 @@ III_URL="ws://$ENGINE_IP:49134"
 echo "[inference-setup] Starting at $(date), engine=$III_URL"
 
 # ── System dependencies ───────────────────────────────────────────────────────
+export HOME=/root   # cloud-init user_data does not set HOME
 apt-get update -qq
-apt-get install -y -qq python3 python3-pip python3-venv curl git
+apt-get install -y -qq python3 python3-pip python3-venv curl git jq
 
 # ── Project directory ─────────────────────────────────────────────────────────
 WORKER_DIR=/opt/iii-inference-worker

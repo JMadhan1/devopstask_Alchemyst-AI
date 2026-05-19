@@ -9,9 +9,10 @@ echo "[engine-setup] Starting at $(date)"
 
 # ── System dependencies ───────────────────────────────────────────────────────
 apt-get update -qq
-apt-get install -y -qq curl git unzip
+apt-get install -y -qq curl git unzip jq
 
 # ── Install iii engine ───────────────────────────────────────────────────────
+export HOME=/root   # cloud-init user_data does not set HOME; installer needs it
 if ! command -v iii &>/dev/null; then
   echo "[engine-setup] Installing iii engine…"
   curl -fsSL https://install.iii.dev/iii/main/install.sh | sh

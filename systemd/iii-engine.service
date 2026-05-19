@@ -1,0 +1,21 @@
+[Unit]
+Description=iii Engine (WebSocket hub + HTTP API gateway)
+Documentation=https://iii.dev/docs
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/iii-engine
+ExecStart=/root/.iii/bin/iii --config config.yaml
+Restart=on-failure
+RestartSec=5
+# Limit memory in case of runaway state growth
+MemoryMax=1G
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=iii-engine
+
+[Install]
+WantedBy=multi-user.target

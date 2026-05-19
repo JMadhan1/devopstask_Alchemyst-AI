@@ -1,0 +1,13 @@
+name: caller-worker
+runtime:
+  language: typescript
+  package_manager: npm
+  entry: src/worker.ts
+
+scripts:
+  install: "npm install"
+  start: "npm run start"
+
+resources:
+  memory: 512
+  cpus: 1

@@ -1,0 +1,21 @@
+[Unit]
+Description=iii Caller Worker (TypeScript / OpenAI-compatible HTTP bridge)
+Documentation=https://iii.dev/docs
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/iii-caller-worker
+EnvironmentFile=/etc/iii-caller.env
+ExecStart=/usr/bin/npx tsx src/worker.ts
+Restart=on-failure
+RestartSec=5
+MemoryMax=512M
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=iii-caller
+
+[Install]
+WantedBy=multi-user.target

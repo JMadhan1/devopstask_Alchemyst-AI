@@ -1,0 +1,23 @@
+[Unit]
+Description=iii Inference Worker (Python / Gemma 3 GGUF)
+Documentation=https://iii.dev/docs
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/iii-inference-worker
+EnvironmentFile=/etc/iii-inference.env
+ExecStart=/opt/iii-inference-worker/.venv/bin/python inference_worker.py
+# Give the model time to load before considering it failed
+TimeoutStartSec=300
+Restart=on-failure
+RestartSec=10
+MemoryMax=10G
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=iii-inference
+
+[Install]
+WantedBy=multi-user.target

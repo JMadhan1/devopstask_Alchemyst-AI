@@ -1,0 +1,33 @@
+# Terraform state — never commit
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/.terraform.lock.hcl
+terraform/tfplan
+
+# tfvars may contain project IDs / secrets
+terraform/terraform.tfvars
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+
+# iii runtime data
+data/
+*.db
+
+# Model weights
+*.gguf
+*.bin
+*.safetensors
+
+# Editor
+.vscode/
+.idea/
+*.swp

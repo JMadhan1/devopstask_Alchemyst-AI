@@ -1,0 +1,9 @@
+[[worker]]
+name = "iii-http"
+version = "0.11.0"
+type = "engine"
+
+[[worker]]
+name = "iii-state"
+version = "0.11.0"
+type = "engine"

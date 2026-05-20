@@ -49,10 +49,11 @@ def run_inference_handler(payload: dict) -> dict:
     if not messages:
         return {"error": "No messages provided"}
 
-    # Build prompt using Gemma's native chat format (BOS + turn markers).
+    # Build prompt using Gemma's native chat format.
+    # llama.cpp adds BOS automatically from the GGUF metadata; omit it here.
     # create_chat_completion returns empty content for this GGUF because
     # llama.cpp doesn't auto-detect the Gemma 3 template; raw completion works.
-    prompt = "<bos>"
+    prompt = ""
     for msg in messages:
         role = "model" if msg["role"] == "assistant" else msg["role"]
         content = msg.get("content", "")
@@ -65,7 +66,8 @@ def run_inference_handler(payload: dict) -> dict:
         stop=["<end_of_turn>", "<eos>"],
         echo=False,
         temperature=0.7,
-        repeat_penalty=1.1,
+        repeat_penalty=1.3,
+        top_p=0.9,
     )
 
     response_text = output["choices"][0]["text"].strip()

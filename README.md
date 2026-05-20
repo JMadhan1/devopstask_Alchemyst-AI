@@ -66,9 +66,9 @@ Client → POST /v1/chat/completions  (engine-vm public IP :3111)
 ```json
 {
   "messages": [
-    {"role": "user", "content": "Explain transformers in one sentence."}
+    {"role": "user", "content": "What is 2 + 2?"}
   ],
-  "max_tokens": 256
+  "max_tokens": 64
 }
 ```
 
@@ -76,13 +76,13 @@ Client → POST /v1/chat/completions  (engine-vm public IP :3111)
 ```json
 {
   "object": "chat.completion",
-  "model": "gemma-3-1b-it-Q8_0.gguf",
+  "model": "gemma-3-270m-Q8_0.gguf",
   "choices": [
     {
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "A transformer is a neural network architecture that processes sequences in parallel using self-attention, enabling efficient learning of long-range dependencies."
+        "content": "4."
       },
       "finish_reason": "stop"
     }
@@ -98,6 +98,24 @@ curl -X POST http://ENGINE_PUBLIC_IP:3111/v1/chat/completions \
     "messages": [{"role": "user", "content": "What is 2 + 2?"}],
     "max_tokens": 128
   }'
+```
+
+**Live tested output** (end-to-end across all three VMs):
+```json
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "4.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "model": "gemma-3-270m-Q8_0.gguf",
+  "object": "chat.completion"
+}
 ```
 
 ---
@@ -124,8 +142,8 @@ aws configure
 ### 2. Clone this repo
 
 ```bash
-git clone https://github.com/YOUR_USER/YOUR_REPO.git
-cd YOUR_REPO
+git clone https://github.com/JMadhan1/devopstask_Alchemyst-AI.git
+cd devopstask_Alchemyst-AI
 ```
 
 ### 3. Provision infrastructure
@@ -143,8 +161,8 @@ Terraform will print:
 - `curl_example` — ready-to-run test command
 - `ssm_session_commands` — how to shell into each VM
 
-> **Cost note:** The stack uses t3.small (engine, caller) + t3.large (inference) + 1 NAT Gateway.
-> Estimated cost with AWS free-tier credits: ~$3–5/day. Remember to `terraform destroy` when done.
+> **Cost note:** The stack uses 3× t3.small instances + 1 NAT Gateway.
+> Estimated cost with AWS free-tier credits: ~$2–4/day. Remember to `terraform destroy` when done.
 
 ### 4. Wait for startup scripts to finish (~5–10 min)
 
